@@ -10,6 +10,8 @@
 # unpin:    DELETE endpoint+"/"+ipfshash
 # pinFileToIPFS: POST endpoint files=file_to_be_pinned
 # userPinnedDataTotal: GET endpoint
+# pinByHash: POST endpoint json={hashToPin}
+# pinFromFS: endpoint not available in pinata SDK
 
 
 import os
