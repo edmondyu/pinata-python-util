@@ -111,6 +111,7 @@ for i,item1 in enumerate(listedDict1):
                 print("Upload failed.  Error:"+str(resp.status_code))
         else:
             print("File ", filename," is missing.")
+            dict_writer.writerow(item1)
 
 
 
