@@ -27,7 +27,7 @@ endpoint =''
 
 
 # construct the Pinata key object
-keylist=PinataKey('pinata_api_key.csv')
+keylist=PinataKey('pinataApiKey.csv')
 endpoint = keylist.fetchEndpoint('pinFileToIPFS')
 
 

@@ -15,7 +15,7 @@ print(f"Current working directory: {os.getcwd()}")
 headers={}
 endpoint =''
 # construct the Pinata key object
-keylist=PinataKey('pinata_api_key.csv')
+keylist=PinataKey('pinataApiKey.csv')
 endpoint = keylist.fetchEndpoint('pinFileToIPFS') # choose the pinata endpoint and the corresponding header format
 
 mode='likerland' # the mode label is defined in the file pinata_api_key.csv.  
