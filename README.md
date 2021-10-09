@@ -3,7 +3,7 @@ This toolkit is for Pinata users who use Python.
 
 ## Installation
 - git clone https://github.com/edmondyu/pinata-python-util.git
-- edit the file [pinata_api_key.csv](https://github.com/edmondyu/pinata-python-util/blob/main/pinata_api_key.csv "pinata_api_key.csv") to include your Pinata API key.  You can assign any label to your key, and supply the label as an argument of the command to use that key.
+- edit the file [pinataApiKey.csv](https://github.com/edmondyu/pinata-python-util/blob/main/pinataApiKey.csv "pinataApiKey.csv") to include your Pinata API key.  You can assign any label to your key, and supply the label as an argument of the command to use that key.
 
 ## Using [pinFileInCSV.py](https://github.com/edmondyu/pinata-python-util/blob/main/pinFileInCSV.py "pinFileInCSV.py")
 
