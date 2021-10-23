@@ -45,8 +45,8 @@ class PinataKey:
 
         for keyItem in self.allKeyList:
             if(keyItem['label'] == label):
-                self.returnKey['pinataApiKey']=keyItem['pinataApiKey']
-                self.returnKey['pinataSecretApiKey']=keyItem['pinataSecretApiKey']
+                self.returnKey['pinata_api_key']=keyItem['pinataApiKey']
+                self.returnKey['pinata_secret_api_key']=keyItem['pinataSecretApiKey']
                 break
         return(self.returnKey)
 
