@@ -30,6 +30,31 @@ endpoint =''
 keylist=PinataKey('pinataApiKey.csv')
 endpoint = keylist.fetchEndpoint('pinFileToIPFS')
 
+def pinFile(thisFilePath):
+    if path.isfile(thisFilePath):
+        print('Uploading {} of {}'.format(i,totalRecords), thisFilePath, '...... ', end = '', flush= True)
+        files = {"file":open(thisFilePath, 'rb')}
+
+        # Retry for 3 times if failed
+        retry=0
+        print("attempt {}...".format(retry+1),end='',flush=True)
+        resp = requests.post(endpoint, headers=headers, files=files)
+        while(resp.status_code != 200 and retry < 3):
+            retry +=1
+            print("attempt {}...".format(retry+1),end='',flush=True)
+            time.sleep(15)
+            resp = requests.post(endpoint, headers=headers, files=files)
+            
+        if(resp.status_code == 200):
+            print("Upload success")
+            # return ipfsHash
+            return resp.json()["IpfsHash"]
+        else:
+            print("Upload failed.  Error:"+str(resp.status_code))
+            return False
+    else:
+        print("File ", filename," is missing.")
+        return False
 
 # Parsing Parameter
 if(len(sys.argv) != 3):
@@ -59,10 +84,15 @@ totalRecords=len(listedDict1)
 
 newItem=listedDict1[0]
 fieldnames = newItem.keys()
+relatedIpfsHashes=[]
 
 if('ipfsHash' not in fieldnames):
     newItem['ipfsHash']=''
     fieldnames = newItem.keys()
+if('relatedIpfsHashes' not in fieldnames):
+    newItem['relatedIpfsHashes']=''
+    fieldnames = newItem.keys()
+
 
 filewriter= open(outputFile,'w', encoding="utf-8")
 
@@ -83,39 +113,40 @@ for i,item1 in enumerate(listedDict1):
         print(f'Already pinned: {ipfsHash}')
         continue
     else:
+        # filename -> ipfsHash
+        # relatedFiles -> otherIpfsHash
         # try to pin the file
         filename = item1['filename']
         filepath = os.path.join(uploadPath,filename)
         print(f"filepath={filepath}")
-        if path.isfile(filepath):
-            print('Uploading {} of {}'.format(i,totalRecords), filename, '...... ', end = '', flush= True)
-            files = {"file":open(filepath, 'rb')}
-            
-            # Retry for 3 times if failed
-            retry=0
-            print("attempt {}...".format(retry+1),end='',flush=True)
-            resp = requests.post(endpoint, headers=headers, files=files)
-            while(resp.status_code != 200 and retry < 3):
-                retry +=1
-                print("attempt {}...".format(retry+1),end='',flush=True)
-                time.sleep(15)
-                resp = requests.post(endpoint, headers=headers, files=files)
-            
-            if(resp.status_code == 200):
-                print("Upload success")
-                item1['ipfsHash'] = resp.json()["IpfsHash"]
-                # Update csv file
-                dict_writer.writerow(item1)
 
-            else:
-                print("Upload failed.  Error:"+str(resp.status_code))
+        # call a function to get the hash
+        ipfsHash=pinFile(filepath)
+
+        if(ipfsHash):
+                item1['ipfsHash'] = ipfsHash
+
+        #### deal with relatedFiles
+        relatedFilesStr=item1['relatedFiles'][1:-1].replace('\'','')
+        relatedFilesStr=relatedFilesStr.replace(' ','')
+        if(relatedFilesStr):
+            relatedFiles=relatedFilesStr.split(',')
         else:
-            print("File ", filename," is missing.")
-            dict_writer.writerow(item1)
+            relatedFiles=[]
+
+        if(relatedFiles):
+            print('Pinning related files')
+            for filename in relatedFiles:
+                filepath = os.path.join(uploadPath,filename)
+                print(f"filepath={filepath}")
+                # call a function to get the hash
+                relatedIpfsHash=pinFile(filepath)
+                if(relatedIpfsHash):
+                    relatedIpfsHashes.append(relatedIpfsHash)
+            item1['relatedIpfsHashes'] = relatedIpfsHashes
+        
+        dict_writer.writerow(item1)
 
 
 
 filewriter.close()
-
-
-
